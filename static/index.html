@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ N8N Workflow Documentation</title>
+    <style>
+        /* Modern CSS Reset and Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border: #475569;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.2s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .search-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            min-width: 300px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+        }
+
+        .filter-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .filter-group select {
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: auto;
+        }
+
+        .results-info {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        /* States */
+        .state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .state .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .state p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .retry-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .retry-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Workflow Grid */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .workflow-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .workflow-card:hover {
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .workflow-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .workflow-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-active { background: var(--success); }
+        .status-inactive { background: var(--text-muted); }
+
+        .complexity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .complexity-low { background: var(--success); }
+        .complexity-medium { background: var(--warning); }
+        .complexity-high { background: var(--error); }
+
+        .trigger-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .workflow-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .workflow-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .workflow-integrations {
+            margin-top: 1rem;
+        }
+
+        .integrations-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .integrations-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .integration-tag {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .workflow-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: var(--bg);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Load More */
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .load-more-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .load-more-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border-radius: 0.75rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .workflow-detail {
+            margin-bottom: 1rem;
+        }
+
+        .workflow-detail h4 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        .copy-btn.copied:hover {
+            background: var(--success);
+        }
+
+        .json-viewer {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            max-height: 400px;
+            white-space: pre-wrap;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                gap: 1rem;
+            }
+            
+            .search-section, .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                min-width: auto;
+            }
+            
+            .theme-toggle {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+            
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .workflow-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1 class="title">⚡ N8N Workflow Documentation</h1>
+                <p class="subtitle">Lightning-fast workflow browser with instant search</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number" id="totalCount">0</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="activeCount">0</span>
+                        <span class="stat-label">Active</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="nodeCount">0</span>
+                        <span class="stat-label">Total Nodes</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="integrationCount">0</span>
+                        <span class="stat-label">Integrations</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="container">
+                <div class="search-section">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search workflows by name, description, or integration..."
+                    >
+                </div>
+                
+                <div class="filter-section">
+                    <div class="filter-group">
+                        <label for="triggerFilter">Trigger:</label>
+                        <select id="triggerFilter">
+                            <option value="all">All Types</option>
+                            <option value="Webhook">Webhook</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Complex">Complex</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="complexityFilter">Complexity:</label>
+                        <select id="complexityFilter">
+                            <option value="all">All Levels</option>
+                            <option value="low">Low (≤5 nodes)</option>
+                            <option value="medium">Medium (6-15 nodes)</option>
+                            <option value="high">High (16+ nodes)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" id="activeOnly">
+                            Active only
+                        </label>
+                    </div>
+                    
+                    <button id="themeToggle" class="theme-toggle">🌙</button>
+                </div>
+                
+                <div class="results-info">
+                    <span id="resultsCount">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Loading State -->
+                <div id="loadingState" class="state loading">
+                    <div class="icon">⚡</div>
+                    <h3>Loading workflows...</h3>
+                    <p>Please wait while we fetch your workflow data</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="state error hidden">
+                    <div class="icon">❌</div>
+                    <h3>Error Loading Workflows</h3>
+                    <p id="errorMessage">Something went wrong. Please try again.</p>
+                    <button id="retryBtn" class="retry-btn">Retry</button>
+                </div>
+
+                <!-- No Results State -->
+                <div id="noResultsState" class="state hidden">
+                    <div class="icon">🔍</div>
+                    <h3>No workflows found</h3>
+                    <p>Try adjusting your search terms or filters</p>
+                </div>
+
+                <!-- Workflows Grid -->
+                <div id="workflowGrid" class="workflow-grid hidden">
+                    <!-- Workflow cards will be inserted here -->
+                </div>
+
+                <!-- Load More -->
+                <div id="loadMoreContainer" class="load-more hidden">
+                    <button id="loadMoreBtn" class="load-more-btn">Load More</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Workflow Detail Modal -->
+        <div id="workflowModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="modalTitle">Workflow Details</h2>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="workflow-detail">
+                        <h4>Description</h4>
+                        <p id="modalDescription">Loading...</p>
+                    </div>
+                    
+                    <div class="workflow-detail">
+                        <h4>Statistics</h4>
+                        <div id="modalStats">Loading...</div>
+                    </div>
+                    
+                    <div class="workflow-detail">
+                        <h4>Integrations</h4>
+                        <div id="modalIntegrations">Loading...</div>
+                    </div>
+                    
+                    <div class="workflow-detail">
+                        <h4>Actions</h4>
+                        <div class="workflow-actions">
+                            <a id="downloadBtn" class="action-btn primary" href="#" download>📥 Download JSON</a>
+                            <button id="viewJsonBtn" class="action-btn">📄 View JSON</button>
+                            <button id="viewDiagramBtn" class="action-btn">📊 View Diagram</button>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-detail hidden" id="jsonSection">
+                        <div class="section-header">
+                            <h4>Workflow JSON</h4>
+                            <button id="copyJsonBtn" class="copy-btn" title="Copy JSON to clipboard">
+                                📋 Copy
+                            </button>
+                        </div>
+                        <div class="json-viewer" id="jsonViewer">Loading...</div>
+                    </div>
+                    
+                    <div class="workflow-detail hidden" id="diagramSection">
+                        <div class="section-header">
+                            <h4>Workflow Diagram</h4>
+                            <button id="copyDiagramBtn" class="copy-btn" title="Copy diagram code to clipboard">
+                                📋 Copy
+                            </button>
+                        </div>
+                        <div id="diagramViewer">Loading diagram...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Workflow App with Full Functionality
+        class WorkflowApp {
+            constructor() {
+                this.state = {
+                    workflows: [],
+                    currentPage: 1,
+                    totalPages: 1,
+                    totalCount: 0,
+                    perPage: 20,
+                    isLoading: false,
+                    searchQuery: '',
+                    filters: {
+                        trigger: 'all',
+                        complexity: 'all',
+                        activeOnly: false
+                    }
+                };
+                
+                this.elements = {
+                    searchInput: document.getElementById('searchInput'),
+                    triggerFilter: document.getElementById('triggerFilter'),
+                    complexityFilter: document.getElementById('complexityFilter'),
+                    activeOnlyFilter: document.getElementById('activeOnly'),
+                    themeToggle: document.getElementById('themeToggle'),
+                    resultsCount: document.getElementById('resultsCount'),
+                    workflowGrid: document.getElementById('workflowGrid'),
+                    loadMoreContainer: document.getElementById('loadMoreContainer'),
+                    loadMoreBtn: document.getElementById('loadMoreBtn'),
+                    loadingState: document.getElementById('loadingState'),
+                    errorState: document.getElementById('errorState'),
+                    noResultsState: document.getElementById('noResultsState'),
+                    errorMessage: document.getElementById('errorMessage'),
+                    retryBtn: document.getElementById('retryBtn'),
+                    totalCount: document.getElementById('totalCount'),
+                    activeCount: document.getElementById('activeCount'),
+                    nodeCount: document.getElementById('nodeCount'),
+                    integrationCount: document.getElementById('integrationCount'),
+                    // Modal elements
+                    workflowModal: document.getElementById('workflowModal'),
+                    modalTitle: document.getElementById('modalTitle'),
+                    modalClose: document.getElementById('modalClose'),
+                    modalDescription: document.getElementById('modalDescription'),
+                    modalStats: document.getElementById('modalStats'),
+                    modalIntegrations: document.getElementById('modalIntegrations'),
+                    downloadBtn: document.getElementById('downloadBtn'),
+                    viewJsonBtn: document.getElementById('viewJsonBtn'),
+                    viewDiagramBtn: document.getElementById('viewDiagramBtn'),
+                    jsonSection: document.getElementById('jsonSection'),
+                    jsonViewer: document.getElementById('jsonViewer'),
+                    diagramSection: document.getElementById('diagramSection'),
+                    diagramViewer: document.getElementById('diagramViewer'),
+                    copyJsonBtn: document.getElementById('copyJsonBtn'),
+                    copyDiagramBtn: document.getElementById('copyDiagramBtn')
+                };
+                
+                this.searchDebounceTimer = null;
+                this.currentWorkflow = null;
+                this.currentJsonData = null;
+                this.currentDiagramData = null;
+                this.init();
+            }
+            
+            async init() {
+                this.setupEventListeners();
+                this.setupTheme();
+                await this.loadInitialData();
+            }
+            
+            setupEventListeners() {
+                // Search and filters
+                this.elements.searchInput.addEventListener('input', (e) => {
+                    this.state.searchQuery = e.target.value;
+                    this.debounceSearch();
+                });
+                
+                this.elements.triggerFilter.addEventListener('change', (e) => {
+                    this.state.filters.trigger = e.target.value;
+                    this.state.currentPage = 1;
+                    this.resetAndSearch();
+                });
+                
+                this.elements.complexityFilter.addEventListener('change', (e) => {
+                    this.state.filters.complexity = e.target.value;
+                    this.state.currentPage = 1;
+                    this.resetAndSearch();
+                });
+                
+                this.elements.activeOnlyFilter.addEventListener('change', (e) => {
+                    this.state.filters.activeOnly = e.target.checked;
+                    this.state.currentPage = 1;
+                    this.resetAndSearch();
+                });
+                
+                // Load more
+                this.elements.loadMoreBtn.addEventListener('click', () => {
+                    this.loadMoreWorkflows();
+                });
+                
+                // Retry
+                this.elements.retryBtn.addEventListener('click', () => {
+                    this.loadInitialData();
+                });
+                
+                // Theme toggle
+                this.elements.themeToggle.addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+                
+                // Modal events
+                this.elements.modalClose.addEventListener('click', () => {
+                    this.closeModal();
+                });
+                
+                this.elements.workflowModal.addEventListener('click', (e) => {
+                    if (e.target === this.elements.workflowModal) {
+                        this.closeModal();
+                    }
+                });
+                
+                this.elements.viewJsonBtn.addEventListener('click', () => {
+                    this.toggleJsonView();
+                });
+                
+                this.elements.viewDiagramBtn.addEventListener('click', () => {
+                    this.toggleDiagramView();
+                });
+                
+                // Copy button events
+                this.elements.copyJsonBtn.addEventListener('click', () => {
+                    this.copyToClipboard(this.currentJsonData, 'copyJsonBtn');
+                });
+                
+                this.elements.copyDiagramBtn.addEventListener('click', () => {
+                    this.copyToClipboard(this.currentDiagramData, 'copyDiagramBtn');
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeModal();
+                    }
+                });
+            }
+            
+            setupTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                this.updateThemeToggle(savedTheme);
+            }
+            
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                this.updateThemeToggle(newTheme);
+            }
+            
+            updateThemeToggle(theme) {
+                this.elements.themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+            
+            debounceSearch() {
+                clearTimeout(this.searchDebounceTimer);
+                this.searchDebounceTimer = setTimeout(() => {
+                    this.state.currentPage = 1;
+                    this.resetAndSearch();
+                }, 300);
+            }
+            
+            async apiCall(endpoint, options = {}) {
+                const response = await fetch(`/api${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response.json();
+            }
+            
+            async loadInitialData() {
+                this.showState('loading');
+                
+                try {
+                    // Load stats and workflows in parallel
+                    const [stats, workflows] = await Promise.all([
+                        this.apiCall('/stats'),
+                        this.loadWorkflows(true)
+                    ]);
+                    
+                    this.updateStatsDisplay(stats);
+                } catch (error) {
+                    this.showError('Failed to load data: ' + error.message);
+                }
+            }
+            
+            async loadWorkflows(reset = false) {
+                if (reset) {
+                    this.state.currentPage = 1;
+                    this.state.workflows = [];
+                }
+                
+                this.state.isLoading = true;
+                
+                try {
+                    const params = new URLSearchParams({
+                        q: this.state.searchQuery,
+                        trigger: this.state.filters.trigger,
+                        complexity: this.state.filters.complexity,
+                        active_only: this.state.filters.activeOnly,
+                        page: this.state.currentPage,
+                        per_page: this.state.perPage
+                    });
+                    
+                    const response = await this.apiCall(`/workflows?${params}`);
+                    
+                    if (reset) {
+                        this.state.workflows = response.workflows;
+                    } else {
+                        this.state.workflows.push(...response.workflows);
+                    }
+                    
+                    this.state.totalCount = response.total;
+                    this.state.totalPages = response.pages;
+                    
+                    this.updateUI();
+                    
+                } catch (error) {
+                    this.showError('Failed to load workflows: ' + error.message);
+                } finally {
+                    this.state.isLoading = false;
+                }
+            }
+            
+            async loadMoreWorkflows() {
+                if (this.state.currentPage >= this.state.totalPages) return;
+                
+                this.state.currentPage++;
+                await this.loadWorkflows(false);
+            }
+            
+            resetAndSearch() {
+                this.loadWorkflows(true);
+            }
+            
+            updateUI() {
+                this.updateResultsCount();
+                this.renderWorkflows();
+                this.updateLoadMoreButton();
+                
+                if (this.state.workflows.length === 0) {
+                    this.showState('no-results');
+                } else {
+                    this.showState('content');
+                }
+            }
+            
+            updateStatsDisplay(stats) {
+                this.elements.totalCount.textContent = stats.total.toLocaleString();
+                this.elements.activeCount.textContent = stats.active.toLocaleString();
+                this.elements.nodeCount.textContent = stats.total_nodes.toLocaleString();
+                this.elements.integrationCount.textContent = stats.unique_integrations.toLocaleString();
+            }
+            
+            updateResultsCount() {
+                const count = this.state.totalCount;
+                const query = this.state.searchQuery;
+                
+                if (query) {
+                    this.elements.resultsCount.textContent = `${count.toLocaleString()} workflows found for "${query}"`;
+                } else {
+                    this.elements.resultsCount.textContent = `${count.toLocaleString()} workflows`;
+                }
+            }
+            
+            renderWorkflows() {
+                const html = this.state.workflows.map(workflow => this.createWorkflowCard(workflow)).join('');
+                this.elements.workflowGrid.innerHTML = html;
+                
+                // Add click handlers to cards
+                this.elements.workflowGrid.querySelectorAll('.workflow-card').forEach((card, index) => {
+                    card.addEventListener('click', () => {
+                        this.openWorkflowDetail(this.state.workflows[index]);
+                    });
+                });
+            }
+            
+            createWorkflowCard(workflow) {
+                const statusClass = workflow.active ? 'status-active' : 'status-inactive';
+                const complexityClass = `complexity-${workflow.complexity}`;
+                
+                const integrations = workflow.integrations.slice(0, 5).map(integration => 
+                    `<span class="integration-tag">${this.escapeHtml(integration)}</span>`
+                ).join('');
+                
+                const moreIntegrations = workflow.integrations.length > 5 
+                    ? `<span class="integration-tag">+${workflow.integrations.length - 5}</span>` 
+                    : '';
+                
+                return `
+                    <div class="workflow-card" data-filename="${workflow.filename}">
+                        <div class="workflow-header">
+                            <div class="workflow-meta">
+                                <div class="status-dot ${statusClass}"></div>
+                                <div class="complexity-dot ${complexityClass}"></div>
+                                <span>${workflow.node_count} nodes</span>
+                            </div>
+                            <span class="trigger-badge">${this.escapeHtml(workflow.trigger_type)}</span>
+                        </div>
+                        
+                        <h3 class="workflow-title">${this.escapeHtml(workflow.name)}</h3>
+                        <p class="workflow-description">${this.escapeHtml(workflow.description)}</p>
+                        
+                        ${workflow.integrations.length > 0 ? `
+                            <div class="workflow-integrations">
+                                <h4 class="integrations-title">Integrations (${workflow.integrations.length})</h4>
+                                <div class="integrations-list">
+                                    ${integrations}
+                                    ${moreIntegrations}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            async openWorkflowDetail(workflow) {
+                this.currentWorkflow = workflow;
+                this.elements.modalTitle.textContent = workflow.name;
+                this.elements.modalDescription.textContent = workflow.description;
+                
+                // Update stats
+                this.elements.modalStats.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div><strong>Status:</strong> ${workflow.active ? 'Active' : 'Inactive'}</div>
+                        <div><strong>Trigger:</strong> ${workflow.trigger_type}</div>
+                        <div><strong>Complexity:</strong> ${workflow.complexity}</div>
+                        <div><strong>Nodes:</strong> ${workflow.node_count}</div>
+                    </div>
+                `;
+                
+                // Update integrations
+                if (workflow.integrations.length > 0) {
+                    this.elements.modalIntegrations.innerHTML = workflow.integrations
+                        .map(integration => `<span class="integration-tag">${this.escapeHtml(integration)}</span>`)
+                        .join(' ');
+                } else {
+                    this.elements.modalIntegrations.textContent = 'No integrations found';
+                }
+                
+                // Set download link
+                this.elements.downloadBtn.href = `/api/workflows/${workflow.filename}/download`;
+                this.elements.downloadBtn.download = workflow.filename;
+                
+                // Reset view states
+                this.elements.jsonSection.classList.add('hidden');
+                this.elements.diagramSection.classList.add('hidden');
+                
+                this.elements.workflowModal.classList.remove('hidden');
+            }
+            
+            closeModal() {
+                this.elements.workflowModal.classList.add('hidden');
+                this.currentWorkflow = null;
+                this.currentJsonData = null;
+                this.currentDiagramData = null;
+                
+                // Reset button states
+                this.elements.viewJsonBtn.textContent = '📄 View JSON';
+                this.elements.viewDiagramBtn.textContent = '📊 View Diagram';
+                
+                // Reset copy button states
+                this.resetCopyButton('copyJsonBtn');
+                this.resetCopyButton('copyDiagramBtn');
+            }
+            
+            async toggleJsonView() {
+                if (!this.currentWorkflow) return;
+                
+                const isVisible = !this.elements.jsonSection.classList.contains('hidden');
+                
+                if (isVisible) {
+                    this.elements.jsonSection.classList.add('hidden');
+                    this.elements.viewJsonBtn.textContent = '📄 View JSON';
+                } else {
+                    try {
+                        this.elements.jsonViewer.textContent = 'Loading...';
+                        this.elements.jsonSection.classList.remove('hidden');
+                        this.elements.viewJsonBtn.textContent = '📄 Hide JSON';
+                        
+                        const data = await this.apiCall(`/workflows/${this.currentWorkflow.filename}`);
+                        const jsonString = JSON.stringify(data.raw_json, null, 2);
+                        this.currentJsonData = jsonString;
+                        this.elements.jsonViewer.textContent = jsonString;
+                    } catch (error) {
+                        this.elements.jsonViewer.textContent = 'Error loading JSON: ' + error.message;
+                        this.currentJsonData = null;
+                    }
+                }
+            }
+            
+            async toggleDiagramView() {
+                if (!this.currentWorkflow) return;
+                
+                const isVisible = !this.elements.diagramSection.classList.contains('hidden');
+                
+                if (isVisible) {
+                    this.elements.diagramSection.classList.add('hidden');
+                    this.elements.viewDiagramBtn.textContent = '📊 View Diagram';
+                } else {
+                    try {
+                        this.elements.diagramViewer.textContent = 'Loading diagram...';
+                        this.elements.diagramSection.classList.remove('hidden');
+                        this.elements.viewDiagramBtn.textContent = '📊 Hide Diagram';
+                        
+                        const data = await this.apiCall(`/workflows/${this.currentWorkflow.filename}/diagram`);
+                        this.currentDiagramData = data.diagram;
+                        
+                        // Create a simple diagram display
+                        this.elements.diagramViewer.innerHTML = `
+                            <pre style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; overflow-x: auto;">${this.escapeHtml(data.diagram)}</pre>
+                        `;
+                    } catch (error) {
+                        this.elements.diagramViewer.textContent = 'Error loading diagram: ' + error.message;
+                        this.currentDiagramData = null;
+                    }
+                }
+            }
+            
+            updateLoadMoreButton() {
+                const hasMore = this.state.currentPage < this.state.totalPages;
+                
+                if (hasMore && this.state.workflows.length > 0) {
+                    this.elements.loadMoreContainer.classList.remove('hidden');
+                } else {
+                    this.elements.loadMoreContainer.classList.add('hidden');
+                }
+            }
+            
+            showState(state) {
+                // Hide all states
+                this.elements.loadingState.classList.add('hidden');
+                this.elements.errorState.classList.add('hidden');
+                this.elements.noResultsState.classList.add('hidden');
+                this.elements.workflowGrid.classList.add('hidden');
+                
+                // Show the requested state
+                switch (state) {
+                    case 'loading':
+                        this.elements.loadingState.classList.remove('hidden');
+                        break;
+                    case 'error':
+                        this.elements.errorState.classList.remove('hidden');
+                        break;
+                    case 'no-results':
+                        this.elements.noResultsState.classList.remove('hidden');
+                        break;
+                    case 'content':
+                        this.elements.workflowGrid.classList.remove('hidden');
+                        break;
+                }
+            }
+            
+            showError(message) {
+                this.elements.errorMessage.textContent = message;
+                this.showState('error');
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            async copyToClipboard(text, buttonId) {
+                if (!text) {
+                    console.warn('No content to copy');
+                    return;
+                }
+                
+                try {
+                    await navigator.clipboard.writeText(text);
+                    this.showCopySuccess(buttonId);
+                } catch (error) {
+                    // Fallback for older browsers
+                    this.fallbackCopyToClipboard(text, buttonId);
+                }
+            }
+            
+            fallbackCopyToClipboard(text, buttonId) {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    this.showCopySuccess(buttonId);
+                } catch (error) {
+                    console.error('Failed to copy text: ', error);
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            }
+            
+            showCopySuccess(buttonId) {
+                const button = document.getElementById(buttonId);
+                if (!button) return;
+                
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }
+            
+            resetCopyButton(buttonId) {
+                const button = document.getElementById(buttonId);
+                if (!button) return;
+                
+                button.innerHTML = '📋 Copy';
+                button.classList.remove('copied');
+            }
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            window.workflowApp = new WorkflowApp();
+        });
+    </script>
+</body>
+</html>
