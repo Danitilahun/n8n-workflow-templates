@@ -336,7 +336,7 @@
             },
             {
               "name": "Authorization",
-              "value": "Bearer apify_api_8UZf2KdZTkPihmNauBubgDsjAYTfKP4nsQSN"
+              "value": "Bearer YOUR_APIFY_API_TOKEN"
             }
           ]
         }
